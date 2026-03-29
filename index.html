@@ -100,7 +100,7 @@
             BeiDou:  { key: 'bds', color: '#FF0000', colorA: 'rgba(255,0,0,0.5)', colorDark: 'rgba(205,0,0,0.8)',
                        group: 'beidou', icon: 'gnssradar/icon/BeiDou.png', tles: [], markers: [], llhs: [], azels: [] },
             QZSS:    { key: 'qzs', color: '#0000FF', colorA: 'rgba(0,0,255,0.5)', colorDark: 'rgba(0,0,205,0.8)',
-                       group: 'qzss',  icon: 'gnssradar/icon/QZSS.png', tles: [], markers: [], llhs: [], azels: [] },
+                       group: 'gnss', filter: 'QZS', icon: 'gnssradar/icon/QZSS.png', tles: [], markers: [], llhs: [], azels: [] },
             SBAS:    { key: 'sbs', color: '#008080', colorA: 'rgba(0,128,128,0.5)', colorDark: 'rgba(0,100,100,0.8)',
                        group: 'sbas',  icon: 'gnssradar/icon/SBAS.png', tles: [], markers: [], llhs: [], azels: [] }
         };
@@ -613,7 +613,14 @@
             try {
                 var fetches = SYS_ORDER.map(function(sysName) {
                     return fetchTLE(SYS[sysName].group).then(function(text) {
-                        SYS[sysName].tles = parseTLEText(text);
+                        var allTles = parseTLEText(text);
+                        if (SYS[sysName].filter) {
+                            SYS[sysName].tles = allTles.filter(function(t) {
+                                return t.name.indexOf(SYS[sysName].filter) === 0;
+                            });
+                        } else {
+                            SYS[sysName].tles = allTles;
+                        }
                         if (SYS[sysName].tles.length === 0) failedSystems.push(sysName);
                     }).catch(function(err) {
                         console.warn('Failed to fetch TLE for ' + sysName + ':', err);
