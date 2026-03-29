@@ -35,6 +35,11 @@
             font-size: 1.5em;
         }
         #loading.hidden { display: none; }
+        #error-banner {
+            display: none; position: fixed; top: 0; left: 0; width: 100%;
+            background: #c00; color: white; text-align: center; padding: 8px;
+            z-index: 9999; font-size: 14px;
+        }
         .sat-label {
             background: none; border: none; box-shadow: none;
             font-weight: bold; font-size: 11px; text-align: center;
@@ -56,6 +61,7 @@
 </head>
 <body>
     <div id="loading">Loading TLE data from CelesTrak...</div>
+    <div id="error-banner"></div>
     <div id="box1">
         <div id="map"></div>
         <div id="box2">
@@ -603,18 +609,32 @@
             initMap();
 
             // Fetch TLE data from CelesTrak
+            var failedSystems = [];
             try {
                 var fetches = SYS_ORDER.map(function(sysName) {
                     return fetchTLE(SYS[sysName].group).then(function(text) {
                         SYS[sysName].tles = parseTLEText(text);
+                        if (SYS[sysName].tles.length === 0) failedSystems.push(sysName);
                     }).catch(function(err) {
                         console.warn('Failed to fetch TLE for ' + sysName + ':', err);
                         SYS[sysName].tles = [];
+                        failedSystems.push(sysName);
                     });
                 });
                 await Promise.all(fetches);
             } catch (e) {
                 console.error('TLE fetch error:', e);
+            }
+
+            // Show error banner if any systems failed
+            if (failedSystems.length > 0) {
+                var banner = document.getElementById('error-banner');
+                if (failedSystems.length === SYS_ORDER.length) {
+                    banner.textContent = 'Failed to load TLE data from CelesTrak. Please check your network connection and reload.';
+                } else {
+                    banner.textContent = 'Failed to load TLE for: ' + failedSystems.join(', ') + '. Other systems are displayed normally.';
+                }
+                banner.style.display = 'block';
             }
 
             // Log satellite counts

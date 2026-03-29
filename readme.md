@@ -1,46 +1,43 @@
-GNSS-Radar
-===============================================================================
+# GNSS-Radar
 
-Author
--------------------------------------------------------------------------------
-Taro Suzuki  
-E-Mail: <gnsssdrlib@gmail.com>
-HP: <http://www.taroz.net>
+Real-time GNSS satellite constellation viewer.
 
-Overview
--------------------------------------------------------------------------------
-"GNSS-Radar" is a web application to show the current GNSS constellation at a specified location. You can bookmark the following URL to quickly access the application.
-<http://www.taroz.net/GNSS-Radar.html>
+## Demo
 
-Options
--------------------------------------------------------------------------------
-* Set the observer location by latitude and longitude (the unit is degree).
-    * ULR+?lat=xxx&lon=xxx (default: lat=35.7&lon=139.8 (Tokyo))
-    * e.g. <http://www.taroz.net/GNSS-Radar.html?lat=-37.8&lon=145>
+https://rsasaki0109.github.io/GNSS-Radar/
 
-* Set the elevation mask angle when computing the sky plot (the unit is degree).
-    * ULR+?elemask=xxx (default: elemask=10)
-    * e.g. <http://www.taroz.net/GNSS-Radar.html?elemask=45>
+## Overview
 
-* Set the time offset when computing the sky plot (the unit is hour).
-    * ULR+?offhr=xxx (default: offhr=0)
-    * e.g. <http://www.taroz.net/GNSS-Radar.html?offhr=12>
+GNSS-Radar is a web application that shows the current GNSS constellation (GPS, GLONASS, Galileo, BeiDou, QZSS, SBAS) at a specified location. TLE data is fetched live from [CelesTrak](https://celestrak.org/).
 
-* Set the time interval when computing the sky plot (the unit is minutes).
-    * ULR+?tint=xxx (default: tint=30)
-    * e.g. <http://www.taroz.net/GNSS-Radar.html?tint=5>
+Features:
+- Satellite ground track on map (Leaflet + ESRI satellite imagery)
+- Sky plot (azimuth/elevation) with PRN labels
+- Visible satellite count chart (stacked bar)
+- DOP (HDOP/PDOP) computation
+- Drag-and-drop observer location
+- Click chart bar to change time
 
-* Set the number of times when computing the sky plot.
-    * ULR+?ntimes=xxx (default: tint=24, 24*30min=12hour)
-    * e.g. <http://www.taroz.net/GNSS-Radar.html?ntimes=48>
-    
-* These options are started with "?" and can be combined by "&".
+## URL Parameters
 
-Acknowledgments
--------------------------------------------------------------------------------
-"GNSS-Radar" uses the following libraries:
+| Parameter | Description | Default | Example |
+|-----------|-------------|---------|---------|
+| `lat` | Observer latitude (deg) | 35.7 (Tokyo) | `?lat=-37.8` |
+| `lon` | Observer longitude (deg) | 139.8 (Tokyo) | `?lon=145` |
+| `elemask` | Elevation mask (deg) | 10 | `?elemask=45` |
+| `offhr` | Time offset (hours) | 0 | `?offhr=12` |
+| `tint` | Time interval (minutes) | 30 | `?tint=5` |
+| `ntimes` | Number of time steps | 24 | `?ntimes=48` |
 
-* satellite.js: https://github.com/shashwatak/satellite-js
-* highcharts.js: http://www.highcharts.com/
-* Sylvester.js: http://sylvester.jcoglan.com/
-* TLE (Two Line Element) is downloaded from celestrak (<http://www.celestrak.com/>).
+Parameters can be combined: `?lat=35.7&lon=139.8&elemask=15`
+
+## Libraries
+
+- [Leaflet](https://leafletjs.com/) - Map
+- [satellite.js](https://github.com/shashwatak/satellite-js) - Satellite orbit propagation (SGP4)
+- [Highcharts](https://www.highcharts.com/) - Charts
+- TLE data from [CelesTrak](https://celestrak.org/)
+
+## Original
+
+Based on [GNSS-Radar by Taro Suzuki](http://www.taroz.net/GNSS-Radar.html) (2014).
